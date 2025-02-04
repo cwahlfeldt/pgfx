@@ -7,7 +7,7 @@ CXXFLAGS = $(CFLAGS)
 SDL2_LIB = build/libSDL2.a
 SDL2_LIB_OBJS = build/lib/sdl2/SDL_dynapi_cosmo.o
 SDL2_BUNDLED_RELEASE = 2.28.5
-MAIN_EXAMPLE = build/raytracer.com
+MAIN_EXAMPLE = build/pgfx
 MAIN_EXAMPLE_OBJS = build/raytracer.o
 
 .PHONY: default build_setup clean
@@ -35,4 +35,4 @@ build/%.o: src/%.cpp
 	$(CXX) -c $(CXXFLAGS) -o $@ $^
 
 clean:
-	rm -rf build/*
+	rm -rf build
