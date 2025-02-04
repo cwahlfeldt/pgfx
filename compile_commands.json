@@ -1,0 +1,35 @@
+[
+  {
+    "arguments": [
+      "/var/home/waffles/code/cosmocc/bin/x86_64-linux-cosmo-gcc",
+      "-obuild/raytracer.o",
+      "-D__COSMOPOLITAN__",
+      "-D__COSMOCC__",
+      "-D__FATCOSMOCC__",
+      "-include",
+      "libc/integral/normalize.inc",
+      "-fno-semantic-interposition",
+      "-fno-optimize-sibling-calls",
+      "-mno-omit-leaf-frame-pointer",
+      "-Wno-implicit-int",
+      "-mno-tls-direct-seg-refs",
+      "-fpatchable-function-entry=18,16",
+      "-fno-inline-functions-called-once",
+      "-DFTRACE",
+      "-DSYSDEBUG",
+      "-fno-pie",
+      "-nostdinc",
+      "-isystem",
+      "/var/home/waffles/code/cosmocc/bin/../include",
+      "-I./lib/sdl2",
+      "-I./includes",
+      "-fopenmp",
+      "-O3",
+      "-c",
+      "-fno-omit-frame-pointer",
+      "src/raytracer.c"
+    ],
+    "directory": "/var/home/waffles/code/cosmopolitan-sdl2",
+    "file": "/var/home/waffles/code/cosmopolitan-sdl2/src/raytracer.c"
+  }
+]

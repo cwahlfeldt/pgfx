@@ -1,0 +1,6 @@
+Origin: https://github.com/libsdl-org/SDL, release-2.26.5
+License: see LICENSE
+Local changes:
+ - SDL_config.h is taken from include/SDL_config_minimal.h
+ - SDL_dynapi_procs.inc is taken from src/dynapi/SDL_dynapi_procs.h
+ - SDL_dynapi_cosmo.c is modified from src/dynapi/SDL_dynapi.c
