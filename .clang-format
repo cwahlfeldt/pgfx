@@ -12,7 +12,7 @@ AlignConsecutiveAssignments: true
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeComma
 ContinuationIndentWidth: 4
-ColumnLimit: 65
+ColumnLimit: 80
 AlwaysBreakAfterReturnType: None
 BreakBeforeBraces: Attach
 AlignEscapedNewlines: Left

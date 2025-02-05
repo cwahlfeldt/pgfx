@@ -149,9 +149,7 @@ static const char* fragment_3d_shader_source
       "}\n";
 
 // Internal functions
-static bool init_sdl(
-    GLRenderer* renderer,
-    const GLRendererConfig* config) {
+static bool init_sdl(GLRenderer* renderer, const GLRendererConfig* config) {
     if (SDL_CosmoInit() != 0) {
         snprintf(
             renderer->error_message,
@@ -160,9 +158,7 @@ static bool init_sdl(
             SDL_CosmoGetError());
         return false;
     }
-    if (SDL_Init(
-            SDL_INIT_VIDEO | SDL_INIT_TIMER
-            | SDL_INIT_GAMECONTROLLER)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER)
         != 0) {
         snprintf(
             renderer->error_message,
@@ -223,8 +219,7 @@ static bool init_sdl(
     }
 
     // Create OpenGL context
-    renderer->gl_context
-        = SDL_GL_CreateContext(renderer->window);
+    renderer->gl_context = SDL_GL_CreateContext(renderer->window);
     if (!renderer->gl_context) {
         snprintf(
             renderer->error_message,
@@ -248,11 +243,7 @@ static bool init_gl3w(GLRenderer* renderer) {
 static bool init_shaders(GLRenderer* renderer) {
     // Create vertex shader
     GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(
-        vertex_shader,
-        1,
-        &vertex_shader_source,
-        NULL);
+    glShaderSource(vertex_shader, 1, &vertex_shader_source, NULL);
     glCompileShader(vertex_shader);
 
     // Check vertex shader compilation
@@ -260,11 +251,7 @@ static bool init_shaders(GLRenderer* renderer) {
     glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
     if (!success) {
         GLchar info_log[512];
-        glGetShaderInfoLog(
-            vertex_shader,
-            sizeof(info_log),
-            NULL,
-            info_log);
+        glGetShaderInfoLog(vertex_shader, sizeof(info_log), NULL, info_log);
         snprintf(
             renderer->error_message,
             sizeof(renderer->error_message),
@@ -275,22 +262,14 @@ static bool init_shaders(GLRenderer* renderer) {
 
     // Create fragment shader
     GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(
-        fragment_shader,
-        1,
-        &fragment_shader_source,
-        NULL);
+    glShaderSource(fragment_shader, 1, &fragment_shader_source, NULL);
     glCompileShader(fragment_shader);
 
     // Check fragment shader compilation
     glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
     if (!success) {
         GLchar info_log[512];
-        glGetShaderInfoLog(
-            fragment_shader,
-            sizeof(info_log),
-            NULL,
-            info_log);
+        glGetShaderInfoLog(fragment_shader, sizeof(info_log), NULL, info_log);
         snprintf(
             renderer->error_message,
             sizeof(renderer->error_message),
@@ -306,10 +285,7 @@ static bool init_shaders(GLRenderer* renderer) {
     glLinkProgram(renderer->shader_program);
 
     // Check program linking
-    glGetProgramiv(
-        renderer->shader_program,
-        GL_LINK_STATUS,
-        &success);
+    glGetProgramiv(renderer->shader_program, GL_LINK_STATUS, &success);
     if (!success) {
         GLchar info_log[512];
         glGetProgramInfoLog(
@@ -346,9 +322,7 @@ GLRenderer* gl_renderer_create(const GLRendererConfig* config) {
     return renderer;
 }
 
-void gl_renderer_set_clear_color(
-    GLRenderer* renderer,
-    GLRendererColor color) {
+void gl_renderer_set_clear_color(GLRenderer* renderer, GLRendererColor color) {
     if (renderer) {
         renderer->clear_color = color;
     }
@@ -384,13 +358,8 @@ void gl_renderer_process_events(GLRenderer* renderer) {
                 renderer->running = false;
                 break;
             case SDL_WINDOWEVENT:
-                if (event.window.event
-                    == SDL_WINDOWEVENT_RESIZED) {
-                    glViewport(
-                        0,
-                        0,
-                        event.window.data1,
-                        event.window.data2);
+                if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+                    glViewport(0, 0, event.window.data1, event.window.data2);
                 }
                 break;
         }
@@ -398,8 +367,7 @@ void gl_renderer_process_events(GLRenderer* renderer) {
 }
 
 const char* gl_renderer_get_error(const GLRenderer* renderer) {
-    return renderer ? renderer->error_message
-                    : "Invalid renderer instance";
+    return renderer ? renderer->error_message : "Invalid renderer instance";
 }
 
 // Helper function to create rotation matrix
@@ -462,11 +430,7 @@ static bool init_triangle_geometry(GLRenderer* renderer) {
     // Create and bind VBO
     glGenBuffers(1, &renderer->vbo);
     glBindBuffer(GL_ARRAY_BUFFER, renderer->vbo);
-    glBufferData(
-        GL_ARRAY_BUFFER,
-        sizeof(vertices),
-        vertices,
-        GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // Position attribute
     glVertexAttribPointer(
@@ -529,9 +493,8 @@ void gl_renderer_draw_rotating_triangle(
     }
 
     // Set transformation uniform
-    GLint transform_loc = glGetUniformLocation(
-        renderer->shader_program,
-        "transform");
+    GLint transform_loc
+        = glGetUniformLocation(renderer->shader_program, "transform");
     glUniformMatrix4fv(transform_loc, 1, GL_FALSE, transform);
 
     // Draw the triangle
@@ -555,17 +518,13 @@ int gl_renderer_get_window_height(const GLRenderer* renderer) {
     return height;
 }
 
-void gl_renderer_set_window_title(
-    GLRenderer* renderer,
-    const char* title) {
+void gl_renderer_set_window_title(GLRenderer* renderer, const char* title) {
     if (renderer && renderer->window && title) {
         SDL_SetWindowTitle(renderer->window, title);
     }
 }
 
-void gl_renderer_set_fullscreen(
-    GLRenderer* renderer,
-    bool fullscreen) {
+void gl_renderer_set_fullscreen(GLRenderer* renderer, bool fullscreen) {
     if (!renderer || !renderer->window) return;
     SDL_SetWindowFullscreen(
         renderer->window,
@@ -604,11 +563,7 @@ static Mat4 mat4_identity(void) {
     return m;
 }
 
-static Mat4 mat4_perspective(
-    float fov,
-    float aspect,
-    float near,
-    float far) {
+static Mat4 mat4_perspective(float fov, float aspect, float near, float far) {
     Mat4 m            = {0};
     float tanHalfFovy = tanf(fov * 0.5f * M_PI / 180.0f);
 
@@ -624,8 +579,7 @@ static Mat4 mat4_perspective(
 static Mat4 mat4_look_at(Vec3 eye, Vec3 target, Vec3 up) {
     Mat4 m = mat4_identity();
 
-    Vec3 z
-        = {eye.x - target.x, eye.y - target.y, eye.z - target.z};
+    Vec3 z = {eye.x - target.x, eye.y - target.y, eye.z - target.z};
     // Normalize z
     float len = sqrtf(z.x * z.x + z.y * z.y + z.z * z.z);
     z.x /= len;
@@ -643,9 +597,7 @@ static Mat4 mat4_look_at(Vec3 eye, Vec3 target, Vec3 up) {
     x.z /= len;
 
     Vec3 y
-        = {z.y * x.z - z.z * x.y,
-           z.z * x.x - z.x * x.z,
-           z.x * x.y - z.y * x.x};
+        = {z.y * x.z - z.z * x.y, z.z * x.x - z.x * x.z, z.x * x.y - z.y * x.x};
 
     m.elements[0]  = x.x;
     m.elements[1]  = y.x;
@@ -687,8 +639,7 @@ static Mat4 mat4_multiply(Mat4 a, Mat4 b) {
         for (int j = 0; j < 4; j++) {
             float sum = 0.0f;
             for (int k = 0; k < 4; k++) {
-                sum += a.elements[k * 4 + i]
-                       * b.elements[j * 4 + k];
+                sum += a.elements[k * 4 + i] * b.elements[j * 4 + k];
             }
             result.elements[j * 4 + i] = sum;
         }
@@ -781,8 +732,7 @@ void gl_renderer_set_3d_projection(
     SDL_GetWindowSize(renderer->window, &width, &height);
     float aspect = (float)width / (float)height;
 
-    renderer->projection
-        = mat4_perspective(fov, aspect, near, far);
+    renderer->projection = mat4_perspective(fov, aspect, near, far);
 }
 
 void gl_renderer_set_camera(
@@ -799,24 +749,240 @@ void gl_renderer_set_camera(
 // Create mesh data
 static void init_cube_mesh(GLRenderer* renderer) {
     // Cube vertices with normals
-    float vertices[] = {
-        // positions          // normals
-        -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f, 0.5f,  -0.5f,
-        -0.5f, 0.0f,  0.0f,  -1.0f, 0.5f,  0.5f,  -0.5f, 0.0f,
-        0.0f,  -1.0f, -0.5f, 0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f,
-        // ... (add remaining cube vertices)
-    };
+    float vertices[] = {// Front face
+                        -0.5f,
+                        -0.5f,
+                        0.5f,
+                        0.0f,
+                        0.0f,
+                        1.0f,
+                        0.5f,
+                        -0.5f,
+                        0.5f,
+                        0.0f,
+                        0.0f,
+                        1.0f,
+                        0.5f,
+                        0.5f,
+                        0.5f,
+                        0.0f,
+                        0.0f,
+                        1.0f,
+                        -0.5f,
+                        -0.5f,
+                        0.5f,
+                        0.0f,
+                        0.0f,
+                        1.0f,
+                        0.5f,
+                        0.5f,
+                        0.5f,
+                        0.0f,
+                        0.0f,
+                        1.0f,
+                        -0.5f,
+                        0.5f,
+                        0.5f,
+                        0.0f,
+                        0.0f,
+                        1.0f,
+
+                        // Back face
+                        -0.5f,
+                        -0.5f,
+                        -0.5f,
+                        0.0f,
+                        0.0f,
+                        -1.0f,
+                        0.5f,
+                        0.5f,
+                        -0.5f,
+                        0.0f,
+                        0.0f,
+                        -1.0f,
+                        0.5f,
+                        -0.5f,
+                        -0.5f,
+                        0.0f,
+                        0.0f,
+                        -1.0f,
+                        -0.5f,
+                        -0.5f,
+                        -0.5f,
+                        0.0f,
+                        0.0f,
+                        -1.0f,
+                        -0.5f,
+                        0.5f,
+                        -0.5f,
+                        0.0f,
+                        0.0f,
+                        -1.0f,
+                        0.5f,
+                        0.5f,
+                        -0.5f,
+                        0.0f,
+                        0.0f,
+                        -1.0f,
+
+                        // Right face
+                        0.5f,
+                        -0.5f,
+                        -0.5f,
+                        1.0f,
+                        0.0f,
+                        0.0f,
+                        0.5f,
+                        0.5f,
+                        -0.5f,
+                        1.0f,
+                        0.0f,
+                        0.0f,
+                        0.5f,
+                        0.5f,
+                        0.5f,
+                        1.0f,
+                        0.0f,
+                        0.0f,
+                        0.5f,
+                        -0.5f,
+                        -0.5f,
+                        1.0f,
+                        0.0f,
+                        0.0f,
+                        0.5f,
+                        0.5f,
+                        0.5f,
+                        1.0f,
+                        0.0f,
+                        0.0f,
+                        0.5f,
+                        -0.5f,
+                        0.5f,
+                        1.0f,
+                        0.0f,
+                        0.0f,
+
+                        // Left face
+                        -0.5f,
+                        -0.5f,
+                        -0.5f,
+                        -1.0f,
+                        0.0f,
+                        0.0f,
+                        -0.5f,
+                        -0.5f,
+                        0.5f,
+                        -1.0f,
+                        0.0f,
+                        0.0f,
+                        -0.5f,
+                        0.5f,
+                        0.5f,
+                        -1.0f,
+                        0.0f,
+                        0.0f,
+                        -0.5f,
+                        -0.5f,
+                        -0.5f,
+                        -1.0f,
+                        0.0f,
+                        0.0f,
+                        -0.5f,
+                        0.5f,
+                        0.5f,
+                        -1.0f,
+                        0.0f,
+                        0.0f,
+                        -0.5f,
+                        0.5f,
+                        -0.5f,
+                        -1.0f,
+                        0.0f,
+                        0.0f,
+
+                        // Top face
+                        -0.5f,
+                        0.5f,
+                        -0.5f,
+                        0.0f,
+                        1.0f,
+                        0.0f,
+                        -0.5f,
+                        0.5f,
+                        0.5f,
+                        0.0f,
+                        1.0f,
+                        0.0f,
+                        0.5f,
+                        0.5f,
+                        0.5f,
+                        0.0f,
+                        1.0f,
+                        0.0f,
+                        -0.5f,
+                        0.5f,
+                        -0.5f,
+                        0.0f,
+                        1.0f,
+                        0.0f,
+                        0.5f,
+                        0.5f,
+                        0.5f,
+                        0.0f,
+                        1.0f,
+                        0.0f,
+                        0.5f,
+                        0.5f,
+                        -0.5f,
+                        0.0f,
+                        1.0f,
+                        0.0f,
+
+                        // Bottom face
+                        -0.5f,
+                        -0.5f,
+                        -0.5f,
+                        0.0f,
+                        -1.0f,
+                        0.0f,
+                        0.5f,
+                        -0.5f,
+                        -0.5f,
+                        0.0f,
+                        -1.0f,
+                        0.0f,
+                        0.5f,
+                        -0.5f,
+                        0.5f,
+                        0.0f,
+                        -1.0f,
+                        0.0f,
+                        -0.5f,
+                        -0.5f,
+                        -0.5f,
+                        0.0f,
+                        -1.0f,
+                        0.0f,
+                        0.5f,
+                        -0.5f,
+                        0.5f,
+                        0.0f,
+                        -1.0f,
+                        0.0f,
+                        -0.5f,
+                        -0.5f,
+                        0.5f,
+                        0.0f,
+                        -1.0f,
+                        0.0f};
 
     glGenVertexArrays(1, &renderer->cube_vao);
     glGenBuffers(1, &renderer->cube_vbo);
 
     glBindVertexArray(renderer->cube_vao);
     glBindBuffer(GL_ARRAY_BUFFER, renderer->cube_vbo);
-    glBufferData(
-        GL_ARRAY_BUFFER,
-        sizeof(vertices),
-        vertices,
-        GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(
         0,
@@ -848,11 +1014,7 @@ int gl_renderer_add_light(GLRenderer* renderer, Light light) {
 static bool init_gl_shaders(GLRenderer* renderer) {
     // Create and compile 3D vertex shader
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(
-        vertexShader,
-        1,
-        &vertex_3d_shader_source,
-        NULL);
+    glShaderSource(vertexShader, 1, &vertex_3d_shader_source, NULL);
     glCompileShader(vertexShader);
 
     // Check vertex shader compilation
@@ -860,11 +1022,7 @@ static bool init_gl_shaders(GLRenderer* renderer) {
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
     if (!success) {
         GLchar infoLog[512];
-        glGetShaderInfoLog(
-            vertexShader,
-            sizeof(infoLog),
-            NULL,
-            infoLog);
+        glGetShaderInfoLog(vertexShader, sizeof(infoLog), NULL, infoLog);
         snprintf(
             renderer->error_message,
             sizeof(renderer->error_message),
@@ -875,22 +1033,14 @@ static bool init_gl_shaders(GLRenderer* renderer) {
 
     // Create and compile fragment shader
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(
-        fragmentShader,
-        1,
-        &fragment_3d_shader_source,
-        NULL);
+    glShaderSource(fragmentShader, 1, &fragment_3d_shader_source, NULL);
     glCompileShader(fragmentShader);
 
     // Check fragment shader compilation
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
     if (!success) {
         GLchar infoLog[512];
-        glGetShaderInfoLog(
-            fragmentShader,
-            sizeof(infoLog),
-            NULL,
-            infoLog);
+        glGetShaderInfoLog(fragmentShader, sizeof(infoLog), NULL, infoLog);
         snprintf(
             renderer->error_message,
             sizeof(renderer->error_message),
@@ -906,10 +1056,7 @@ static bool init_gl_shaders(GLRenderer* renderer) {
     glLinkProgram(renderer->basic_3d_program);
 
     // Check program linking
-    glGetProgramiv(
-        renderer->basic_3d_program,
-        GL_LINK_STATUS,
-        &success);
+    glGetProgramiv(renderer->basic_3d_program, GL_LINK_STATUS, &success);
     if (!success) {
         GLchar infoLog[512];
         glGetProgramInfoLog(
@@ -931,6 +1078,7 @@ static bool init_gl_shaders(GLRenderer* renderer) {
 
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
 
     return true;
 }
@@ -960,9 +1108,8 @@ void gl_renderer_draw_cube(
     Mat4 rotX = mat4_rotation_x(rotation.x);
     Mat4 rotY = mat4_rotation_y(rotation.y);
     Mat4 rotZ = mat4_rotation_z(rotation.z);
-    model     = mat4_multiply(
-        model,
-        mat4_multiply(rotX, mat4_multiply(rotY, rotZ)));
+    model
+        = mat4_multiply(model, mat4_multiply(rotX, mat4_multiply(rotY, rotZ)));
 
     // Translate
     model.elements[12] = position.x;
@@ -971,9 +1118,7 @@ void gl_renderer_draw_cube(
 
     // Set uniforms
     glUniformMatrix4fv(
-        glGetUniformLocation(
-            renderer->basic_3d_program,
-            "model"),
+        glGetUniformLocation(renderer->basic_3d_program, "model"),
         1,
         GL_FALSE,
         model.elements);
@@ -983,99 +1128,73 @@ void gl_renderer_draw_cube(
         GL_FALSE,
         renderer->view.elements);
     glUniformMatrix4fv(
-        glGetUniformLocation(
-            renderer->basic_3d_program,
-            "projection"),
+        glGetUniformLocation(renderer->basic_3d_program, "projection"),
         1,
         GL_FALSE,
         renderer->projection.elements);
 
     // Set material properties
     glUniform3fv(
-        glGetUniformLocation(
-            renderer->basic_3d_program,
-            "material.ambient"),
+        glGetUniformLocation(renderer->basic_3d_program, "material.ambient"),
         1,
         (float*)&material.ambient);
     glUniform3fv(
-        glGetUniformLocation(
-            renderer->basic_3d_program,
-            "material.diffuse"),
+        glGetUniformLocation(renderer->basic_3d_program, "material.diffuse"),
         1,
         (float*)&material.diffuse);
     glUniform3fv(
-        glGetUniformLocation(
-            renderer->basic_3d_program,
-            "material.specular"),
+        glGetUniformLocation(renderer->basic_3d_program, "material.specular"),
         1,
         (float*)&material.specular);
     glUniform1f(
-        glGetUniformLocation(
-            renderer->basic_3d_program,
-            "material.shininess"),
+        glGetUniformLocation(renderer->basic_3d_program, "material.shininess"),
         material.shininess);
 
     // Set lights
     glUniform1i(
-        glGetUniformLocation(
-            renderer->basic_3d_program,
-            "lightCount"),
+        glGetUniformLocation(renderer->basic_3d_program, "lightCount"),
         renderer->light_count);
     for (int i = 0; i < renderer->light_count; i++) {
         char buf[64];
         snprintf(buf, sizeof(buf), "lights[%d].type", i);
         glUniform1i(
-            glGetUniformLocation(
-                renderer->basic_3d_program,
-                buf),
+            glGetUniformLocation(renderer->basic_3d_program, buf),
             renderer->lights[i].type);
 
         snprintf(buf, sizeof(buf), "lights[%d].position", i);
         glUniform3fv(
-            glGetUniformLocation(
-                renderer->basic_3d_program,
-                buf),
+            glGetUniformLocation(renderer->basic_3d_program, buf),
             1,
             (float*)&renderer->lights[i].position);
 
         snprintf(buf, sizeof(buf), "lights[%d].direction", i);
         glUniform3fv(
-            glGetUniformLocation(
-                renderer->basic_3d_program,
-                buf),
+            glGetUniformLocation(renderer->basic_3d_program, buf),
             1,
             (float*)&renderer->lights[i].direction);
 
         snprintf(buf, sizeof(buf), "lights[%d].color", i);
         glUniform3fv(
-            glGetUniformLocation(
-                renderer->basic_3d_program,
-                buf),
+            glGetUniformLocation(renderer->basic_3d_program, buf),
             1,
             (float*)&renderer->lights[i].color);
 
         snprintf(buf, sizeof(buf), "lights[%d].intensity", i);
         glUniform1f(
-            glGetUniformLocation(
-                renderer->basic_3d_program,
-                buf),
+            glGetUniformLocation(renderer->basic_3d_program, buf),
             renderer->lights[i].intensity);
     }
 
     // Set camera position for specular calculation
     glUniform3fv(
-        glGetUniformLocation(
-            renderer->basic_3d_program,
-            "viewPos"),
+        glGetUniformLocation(renderer->basic_3d_program, "viewPos"),
         1,
         (float*)&renderer->camera_position);
 
     // Draw the cube
     glBindVertexArray(renderer->cube_vao);
-    glDrawArrays(
-        GL_TRIANGLES,
-        0,
-        36);  // 6 faces * 2 triangles * 3 vertices
+    glDrawArrays(GL_TRIANGLES, 0,
+                 36);  // 6 faces * 2 triangles * 3 vertices
 }
 
 void gl_renderer_draw_plane(
@@ -1091,13 +1210,12 @@ void gl_renderer_draw_plane(
 
     // Create plane vertices if not already created
     if (!renderer->plane_vao) {
-        float vertices[] = {
-            // Position          Normal
-            -1.0f, 0.0f, -1.0f, 0.0f, 1.0f,  0.0f, 1.0f,  0.0f,
-            -1.0f, 0.0f, 1.0f,  0.0f, 1.0f,  0.0f, 1.0f,  0.0f,
-            1.0f,  0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 1.0f,  0.0f,
-            1.0f,  0.0f, 1.0f,  0.0f, 1.0f,  0.0f, -1.0f, 0.0f,
-            1.0f,  0.0f, 1.0f,  0.0f};
+        float vertices[]
+            = {// Position          Normal
+               -1.0f, 0.0f, -1.0f, 0.0f,  1.0f, 0.0f, 1.0f, 0.0f, -1.0f,
+               0.0f,  1.0f, 0.0f,  1.0f,  0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+               -1.0f, 0.0f, -1.0f, 0.0f,  1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+               0.0f,  1.0f, 0.0f,  -1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f};
 
         glGenVertexArrays(1, &renderer->plane_vao);
         glGenBuffers(1, &renderer->plane_vbo);
@@ -1153,9 +1271,7 @@ void gl_renderer_draw_plane(
 
     // Set uniforms
     glUniformMatrix4fv(
-        glGetUniformLocation(
-            renderer->basic_3d_program,
-            "model"),
+        glGetUniformLocation(renderer->basic_3d_program, "model"),
         1,
         GL_FALSE,
         model.elements);
@@ -1165,90 +1281,66 @@ void gl_renderer_draw_plane(
         GL_FALSE,
         renderer->view.elements);
     glUniformMatrix4fv(
-        glGetUniformLocation(
-            renderer->basic_3d_program,
-            "projection"),
+        glGetUniformLocation(renderer->basic_3d_program, "projection"),
         1,
         GL_FALSE,
         renderer->projection.elements);
 
     // Set material properties
     glUniform3fv(
-        glGetUniformLocation(
-            renderer->basic_3d_program,
-            "material.ambient"),
+        glGetUniformLocation(renderer->basic_3d_program, "material.ambient"),
         1,
         (float*)&material.ambient);
     glUniform3fv(
-        glGetUniformLocation(
-            renderer->basic_3d_program,
-            "material.diffuse"),
+        glGetUniformLocation(renderer->basic_3d_program, "material.diffuse"),
         1,
         (float*)&material.diffuse);
     glUniform3fv(
-        glGetUniformLocation(
-            renderer->basic_3d_program,
-            "material.specular"),
+        glGetUniformLocation(renderer->basic_3d_program, "material.specular"),
         1,
         (float*)&material.specular);
     glUniform1f(
-        glGetUniformLocation(
-            renderer->basic_3d_program,
-            "material.shininess"),
+        glGetUniformLocation(renderer->basic_3d_program, "material.shininess"),
         material.shininess);
 
     // Set lights
     glUniform1i(
-        glGetUniformLocation(
-            renderer->basic_3d_program,
-            "lightCount"),
+        glGetUniformLocation(renderer->basic_3d_program, "lightCount"),
         renderer->light_count);
     for (int i = 0; i < renderer->light_count; i++) {
         char buf[64];
         snprintf(buf, sizeof(buf), "lights[%d].type", i);
         glUniform1i(
-            glGetUniformLocation(
-                renderer->basic_3d_program,
-                buf),
+            glGetUniformLocation(renderer->basic_3d_program, buf),
             renderer->lights[i].type);
 
         snprintf(buf, sizeof(buf), "lights[%d].position", i);
         glUniform3fv(
-            glGetUniformLocation(
-                renderer->basic_3d_program,
-                buf),
+            glGetUniformLocation(renderer->basic_3d_program, buf),
             1,
             (float*)&renderer->lights[i].position);
 
         snprintf(buf, sizeof(buf), "lights[%d].direction", i);
         glUniform3fv(
-            glGetUniformLocation(
-                renderer->basic_3d_program,
-                buf),
+            glGetUniformLocation(renderer->basic_3d_program, buf),
             1,
             (float*)&renderer->lights[i].direction);
 
         snprintf(buf, sizeof(buf), "lights[%d].color", i);
         glUniform3fv(
-            glGetUniformLocation(
-                renderer->basic_3d_program,
-                buf),
+            glGetUniformLocation(renderer->basic_3d_program, buf),
             1,
             (float*)&renderer->lights[i].color);
 
         snprintf(buf, sizeof(buf), "lights[%d].intensity", i);
         glUniform1f(
-            glGetUniformLocation(
-                renderer->basic_3d_program,
-                buf),
+            glGetUniformLocation(renderer->basic_3d_program, buf),
             renderer->lights[i].intensity);
     }
 
     // Set camera position for specular calculation
     glUniform3fv(
-        glGetUniformLocation(
-            renderer->basic_3d_program,
-            "viewPos"),
+        glGetUniformLocation(renderer->basic_3d_program, "viewPos"),
         1,
         (float*)&renderer->camera_position);
 

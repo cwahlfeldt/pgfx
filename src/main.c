@@ -4,11 +4,7 @@
 #include "renderer.h"
 
 static void error_exit(const char* msg, GLRenderer* renderer) {
-    fprintf(
-        stderr,
-        "Error: %s - %s\n",
-        msg,
-        gl_renderer_get_error(renderer));
+    fprintf(stderr, "Error: %s - %s\n", msg, gl_renderer_get_error(renderer));
     gl_renderer_destroy(renderer);
     exit(1);
 }
@@ -38,7 +34,7 @@ int main(void) {
     gl_renderer_set_3d_projection(renderer, 45.0f, 0.1f, 100.0f);
 
     // Setup camera
-    Vec3 eye    = vec3_create(3.0f, 4.0f, 5.0f);
+    Vec3 eye    = vec3_create(3.0f, 3.0f, 5.0f);
     Vec3 target = vec3_create(0.0f, 0.0f, 0.0f);
     Vec3 up     = vec3_create(0.0f, 1.0f, 0.0f);
     gl_renderer_set_camera(renderer, eye, target, up);
@@ -47,7 +43,7 @@ int main(void) {
     Light mainLight
         = {.type      = LIGHT_DIRECTIONAL,
            .direction = vec3_create(-1.0f, -1.0f, -1.0f),
-           .color     = vec3_create(1.0f, 1.0f, 0.9f),
+           .color     = vec3_create(1.0f, 1.0f, 1.0f),
            .intensity = 1.0f};
     gl_renderer_add_light(renderer, mainLight);
 
@@ -59,11 +55,12 @@ int main(void) {
         32.0f                           // shininess
     );
 
+    // Create a bright material for the cube
     Material cubeMaterial = material_create(
-        vec3_create(0.1f, 0.1f, 0.2f),  // ambient
-        vec3_create(0.4f, 0.4f, 0.8f),  // diffuse
-        vec3_create(0.5f, 0.5f, 0.5f),  // specular
-        64.0f                           // shininess
+        vec3_create(0.2f, 0.2f, 0.2f),  // ambient
+        vec3_create(0.8f, 0.8f, 0.8f),  // diffuse
+        vec3_create(1.0f, 1.0f, 1.0f),  // specular
+        32.0f                           // shininess
     );
 
     float cubeRotation = 0.0f;
@@ -73,6 +70,16 @@ int main(void) {
         gl_renderer_process_events(renderer);
         gl_renderer_begin_frame(renderer);
 
+        gl_renderer_draw_cube(
+            renderer,
+            vec3_create(0.0f, 0.0f, 0.0f),          // position
+            1.0f,                                   // size
+            vec3_create(0.0f, cubeRotation, 0.0f),  // rotation
+            cubeMaterial);
+
+        // Draw rotating cube
+        cubeRotation += 0.01f;
+
         // Draw plane
         gl_renderer_draw_plane(
             renderer,
@@ -80,15 +87,6 @@ int main(void) {
             vec3_create(0.0f, 1.0f, 0.0f),   // normal
             10.0f,                           // size
             planeMaterial);
-
-        // Draw rotating cube
-        cubeRotation += 0.01f;
-        gl_renderer_draw_cube(
-            renderer,
-            vec3_create(0.0f, 0.0f, 0.0f),          // position
-            1.0f,                                   // size
-            vec3_create(0.0f, cubeRotation, 0.0f),  // rotation
-            cubeMaterial);
 
         gl_renderer_end_frame(renderer);
     }
